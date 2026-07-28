@@ -1,6 +1,11 @@
 # ¡Hola! Soy Lucas Dávalle 🤖
 
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-lucas--davalle-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/lucas-davalle)
+[![Portfolio](https://img.shields.io/badge/Portfolio-lucasdavalle.github.io-orange)](https://lucasdavalle.github.io)
+
 Desarrollador orientado a **robótica y sistemas embebidos**, con base sólida en backend (Java/C#) que ahora aplico a **ROS 2, ROS 1 y C++** para construir robots reales.
+
+🔗 **[Ver portfolio completo de robótica →](https://lucasdavalle.github.io)** — bitácora en vivo de proyectos ROS 2/C++ sobre un robot físico (LanderPi), con demos reales grabadas en el robot.
 
 - 🔭 Actualmente construyendo un workspace de **ROS 2 (Humble, C++)** con un rover marciano simulado: tópicos, servicios, acciones, executors, composición de nodos y visión.
 - 🧱 También completé un workspace de **ROS 1 (Noetic, C++)** con un robot TurtleBot3 que sigue paredes de forma autónoma, integrando tópicos, servicios y acciones.
@@ -11,10 +16,13 @@ Desarrollador orientado a **robótica y sistemas embebidos**, con base sólida e
 
 ## 🛠️ Stack
 
-**Robótica:** ROS 2 · ROS 1 · C++ · Simulación (Gazebo)
-**Backend:** Java · C# · RESTful APIs
-**Mobile:** Kotlin · Android
-**Otros:** C · HTML
+![ROS2](https://img.shields.io/badge/ROS2-Humble-22314E?logo=ros&logoColor=white)
+![ROS1](https://img.shields.io/badge/ROS1-Noetic-22314E?logo=ros&logoColor=white)
+![C++](https://img.shields.io/badge/C++-00599C?logo=cplusplus&logoColor=white)
+![Java](https://img.shields.io/badge/Java-ED8B00?logo=openjdk&logoColor=white)
+![C#](https://img.shields.io/badge/C%23-239120?logo=csharp&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?logo=kotlin&logoColor=white)
+![Gazebo](https://img.shields.io/badge/Gazebo-Simulation-808080?logo=gazebo&logoColor=white)
 
 ## 🚀 Proyectos destacados
 
@@ -26,3 +34,7 @@ Desarrollador orientado a **robótica y sistemas embebidos**, con base sólida e
 | [Impresora-Braille](https://github.com/lucasdavalle/Impresora-Braille) | Impresora Braille para personas ciegas — proyecto ITS Villada 2019. |
 | [WifiDots](https://github.com/lucasdavalle/WifiDots) | Automatización del hogar con Kotlin. |
 | [NotificacionService](https://github.com/lucasdavalle/NotificacionService) | Servicio de notificaciones automatizado en Java. |
+
+## 📊 GitHub Stats
+
+![Lucas's GitHub stats](https://github-readme-stats.vercel.app/api?username=lucasdavalle&show_icons=true&theme=default)
