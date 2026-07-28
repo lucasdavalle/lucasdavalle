@@ -166,11 +166,14 @@
   /* ---------- Hero ---------- */
   .hero { padding: 64px 0 40px; }
   .hero h1 {
-    font-size: clamp(2.1rem, 5vw, 3.4rem);
-    font-weight: 600;
-    max-width: 18ch;
-    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: clamp(1.5rem, 3.6vw, 2.4rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    max-width: 26ch;
+    margin-top: 12px;
   }
+  .hero h1 .sep { color: var(--telemetry); margin: 0 0.35em; }
   .hero .lede {
     max-width: 62ch;
     color: var(--text-muted);
@@ -246,7 +249,7 @@
     gap: 16px;
   }
 
-  /* ---------- Project card ---------- */
+  /* ---------- Project card (whole card is a link to its detail view) ---------- */
   .card {
     background: var(--surface);
     border: 1px solid var(--line);
@@ -256,9 +259,12 @@
     flex-direction: column;
     gap: 12px;
     position: relative;
+    text-decoration: none;
+    color: inherit;
     transition: border-color 0.15s ease, transform 0.15s ease;
   }
   .card:hover { border-color: var(--telemetry); transform: translateY(-2px); }
+  .card:hover .cta { color: var(--accent); }
   .card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .card-id {
     font-family: var(--font-mono);
@@ -312,10 +318,80 @@
   .status-progress { background: var(--status-progress-bg); color: var(--status-progress-fg); }
   .status-done { background: var(--status-done-bg); color: var(--status-done-fg); }
 
-  .card-links { display: flex; gap: 14px; font-family: var(--font-mono); font-size: 0.78rem; margin-top: auto; padding-top: 4px; border-top: 1px solid var(--line); }
-  .card-links a { color: var(--text); }
-  .card-links a:hover { color: var(--accent); }
-  .card-links .pending { color: var(--text-faint); }
+  .card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line); }
+  .cta { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); transition: color 0.15s ease; }
+
+  /* ---------- Detail view ---------- */
+  .back-link {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: inline-block;
+    margin: 32px 0 20px;
+  }
+  .back-link:hover { color: var(--accent); }
+
+  .detail-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .detail-head h1 { font-size: clamp(1.6rem, 4vw, 2.4rem); margin-top: 8px; }
+  .detail-oneliner { color: var(--text-muted); font-size: 1.05rem; margin-top: 10px; max-width: 62ch; }
+  .detail-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+
+  .detail-media {
+    margin-top: 28px;
+    aspect-ratio: 16 / 9;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-faint);
+  }
+  .detail-media img, .detail-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .callout {
+    margin-top: 18px;
+    border-left: 3px solid var(--telemetry);
+    background: var(--surface);
+    border-radius: 0 4px 4px 0;
+    padding: 12px 16px;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+  }
+  .callout .k { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--telemetry); display: block; margin-bottom: 5px; }
+
+  .detail-section { margin-top: 34px; }
+  .detail-section h2 { font-size: 1.05rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-faint); border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  .detail-section p { margin-top: 14px; color: var(--text); max-width: 68ch; }
+  .detail-section p + p { margin-top: 10px; }
+
+  .metrics-table { margin-top: 14px; overflow-x: auto; }
+  .metrics-table table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  .metrics-table th, .metrics-table td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+  .metrics-table th { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
+  .metrics-table td:last-child { font-family: var(--font-mono); color: var(--telemetry); font-variant-numeric: tabular-nums; }
+
+  .interfaces-list { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+  .interfaces-list code {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    background: var(--surface-raised);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 5px 10px;
+    display: inline-block;
+    width: fit-content;
+    color: var(--text);
+  }
+
+  .detail-links { display: flex; gap: 18px; margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 0.85rem; flex-wrap: wrap; }
+  .detail-links a { color: var(--text); }
+  .detail-links a:hover { color: var(--accent); }
+  .detail-links .pending { color: var(--text-faint); }
+  .detail-empty { padding: 60px 0; color: var(--text-muted); }
 
   /* ---------- Footer ---------- */
   footer {
@@ -345,38 +421,38 @@
 </div>
 
 <main class="wrap">
-  <section class="hero">
-    <p class="eyebrow">UNIDAD LANDERPI-01 · REGISTRO DE INGENIERÍA</p>
-    <h1>Robótica real, en C++, sobre hardware real.</h1>
-    <p class="lede">
-      Bitácora de proyectos construidos sobre un LanderPi (ROS 2 / Raspberry Pi 5): cada
-      entrada es un sistema completo — percepción, decisión y control — probado y
-      grabado sobre el robot físico, no en simulación. Acá vas a encontrar el repo, la
-      demo real y qué problema de robótica resuelve cada uno.
-    </p>
-    <p class="lede">
-      <!-- EDITAR: reemplazá estos enlaces por los tuyos -->
-    </p>
-    <div class="links">
-      <a href="https://github.com/TU_USUARIO" target="_blank" rel="noopener">GITHUB ↗</a>
-      <a href="https://www.linkedin.com/in/TU_USUARIO" target="_blank" rel="noopener">LINKEDIN ↗</a>
-    </div>
+  <div id="view-list">
+    <section class="hero">
+      <p class="eyebrow">UNIDAD LANDERPI-01 · REGISTRO DE INGENIERÍA</p>
+      <h1>ROS 2 (Humble)<span class="sep">·</span>C++17<span class="sep">·</span>Hardware-in-the-loop</h1>
+      <p class="lede">
+        Bitácora de proyectos construidos sobre un LanderPi (ROS 2 / Raspberry Pi 5): cada
+        entrada es un sistema completo — percepción, decisión y control — probado y
+        grabado sobre el robot físico, no en simulación. Tocá un proyecto para ver su
+        demo y su explicación completa.
+      </p>
+      <div class="links">
+        <a href="https://github.com/TU_USUARIO" target="_blank" rel="noopener">GITHUB ↗</a>
+        <a href="https://www.linkedin.com/in/TU_USUARIO" target="_blank" rel="noopener">LINKEDIN ↗</a>
+      </div>
 
-    <div class="specstrip">
-      <div class="spec"><div class="k">Chasis</div><div class="v">Mecanum, 4WD</div></div>
-      <div class="spec"><div class="k">Brazo</div><div class="v">6 GDL, bus servo</div></div>
-      <div class="spec"><div class="k">Lidar</div><div class="v">MS200, TOF</div></div>
-      <div class="spec"><div class="k">Cámara</div><div class="v">Aurora930, RGB-D</div></div>
-      <div class="spec"><div class="k">Audio</div><div class="v">WonderEcho Pro</div></div>
-      <div class="spec"><div class="k">Cómputo</div><div class="v">Raspberry Pi 5</div></div>
-    </div>
+      <div class="specstrip">
+        <div class="spec"><div class="k">Chasis</div><div class="v">Mecanum, 4WD</div></div>
+        <div class="spec"><div class="k">Brazo</div><div class="v">6 GDL, bus servo</div></div>
+        <div class="spec"><div class="k">Lidar</div><div class="v">MS200, TOF</div></div>
+        <div class="spec"><div class="k">Cámara</div><div class="v">Aurora930, RGB-D</div></div>
+        <div class="spec"><div class="k">Audio</div><div class="v">WonderEcho Pro</div></div>
+        <div class="spec"><div class="k">Cómputo</div><div class="v">Raspberry Pi 5</div></div>
+      </div>
 
-    <p class="ticker" id="ticker"><!-- se completa por JS --></p>
-  </section>
+      <p class="ticker" id="ticker"><!-- se completa por JS --></p>
+    </section>
 
-  <div class="filters" id="filters" role="group" aria-label="Filtrar proyectos"></div>
+    <div class="filters" id="filters" role="group" aria-label="Filtrar proyectos"></div>
+    <div id="tiers"><!-- se completa por JS --></div>
+  </div>
 
-  <div id="tiers"><!-- se completa por JS --></div>
+  <div id="view-detail" hidden></div>
 
   <footer>
     <p>FIN DE TRANSMISIÓN — bitácora generada a partir del plan de proyectos LanderPi.</p>
@@ -396,32 +472,190 @@
      id          : el mismo ID que usás en PORTFOLIO_PROJECTS.md (B1, I3, A4...)
      tier        : "basico" | "intermedio" | "avanzado"
      title       : nombre corto del proyecto
-     oneLiner    : una oración, qué problema resuelve
+     oneLiner    : una oración para la tarjeta de la lista
+     description : array de párrafos (string[]) para la página de detalle
+     demoCaption : una oración: el escenario físico exacto de la demo real
      tags        : array de strings cortos (tecnologías/conceptos)
+     interfaces  : array de strings con topics/servicios/actions reales que usa
+     metrics     : array de {k, v} — se completa cuando corrés la demo de verdad
      status      : "planned" | "progress" | "done"
      featured    : true si es de los que vas a promocionar en LinkedIn
      repoUrl     : "" hasta que exista el repo (se muestra "pendiente")
      demoUrl     : URL de un GIF/imagen/video corto (se muestra placeholder si está vacío)
      linkedinUrl : "" hasta que publiques el post
+
+     Cada proyecto tiene su propia "página" en #/proyecto/<id> — no hace
+     falta crear un archivo nuevo por proyecto, se arma sola con estos datos.
      ===================================================================== */
   const PROJECTS = [
-    { id: "B1", tier: "basico", title: "Guardia perimetral en C++", oneLiner: "Vigilancia de una zona con lidar: filtrado de ruido, alarma sonora y log de eventos.", tags: ["ROS2", "C++", "Lidar"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-    { id: "B2", tier: "basico", title: "Seguidor de línea adaptativo", oneLiner: "Sigue una línea ajustando la velocidad según la curvatura, con recuperación tras perderla.", tags: ["ROS2", "C++", "OpenCV"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-    { id: "B3", tier: "basico", title: "Estación de clasificación por color", oneLiner: "Pipeline propio de percepción → decisión → brazo para clasificar objetos por color.", tags: ["ROS2", "C++", "Cinemática inversa"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-
-    { id: "I1", tier: "intermedio", title: "Vení hacia mi voz", oneLiner: "Fusión de ángulo de voz (mic array) + distancia de lidar con una máquina de estados propia.", tags: ["ROS2", "C++", "Fusión de sensores"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-    { id: "I2", tier: "intermedio", title: "Evitación de obstáculos VFH", oneLiner: "Vector Field Histogram propio como capa de seguridad reactiva sobre el lidar.", tags: ["ROS2", "C++", "Robótica móvil"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-    { id: "I3", tier: "intermedio", title: "Visual servoing", oneLiner: "Seguimiento de un objetivo con control PID en lazo cerrado sobre cámara.", tags: ["ROS2", "C++", "OpenCV", "Control"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-    { id: "I4", tier: "intermedio", title: "Plataforma robusta", oneLiner: "Watchdog de cmd_vel, diagnósticos agregados y odometría propia con covarianza real.", tags: ["ROS2", "C++", "Observabilidad"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-    { id: "I5", tier: "intermedio", title: "Action server para el brazo", oneLiner: "Secuencia de pick con feedback de progreso y cancelación segura.", tags: ["ROS2", "C++", "Actions"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-    { id: "I6", tier: "intermedio", title: "Hardware interface de ros2_control", oneLiner: "Migración del control ad-hoc al framework estándar de la industria.", tags: ["ROS2", "C++", "ros2_control"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-
-    { id: "A1", tier: "avanzado", title: "Plugin custom de Nav2", oneLiner: "Controller o costmap layer propio cargado por pluginlib, comparado contra DWB/TEB.", tags: ["ROS2", "C++", "Nav2"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-    { id: "A2", tier: "avanzado", title: "Fusión de percepción lidar + YOLO", oneLiner: "Estimación de posición 3D de objetos fusionando detecciones 2D con el lidar.", tags: ["ROS2", "C++", "YOLO", "Percepción"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-    { id: "A3", tier: "avanzado", title: "Mini stack de conducción autónoma", oneLiner: "Carril + señales + semáforo integrados en una sola arquitectura de decisión.", tags: ["ROS2", "C++", "YOLO", "Visión"], status: "planned", featured: true, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-    { id: "A4", tier: "avanzado", title: "Misión con Behavior Tree: buscar y traer", oneLiner: "Navegar, encontrar, levantar y confirmar — orquestado con BehaviorTree.CPP.", tags: ["ROS2", "C++", "BehaviorTree.CPP", "Nav2"], status: "planned", featured: true, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-    { id: "A5", tier: "avanzado", title: "Formación multi-robot", oneLiner: "Dos LanderPi coordinados manteniendo distancia y ángulo relativo en tiempo real.", tags: ["ROS2", "C++", "Multi-robot"], status: "planned", featured: true, repoUrl: "", demoUrl: "", linkedinUrl: "" },
-    { id: "A6", tier: "avanzado", title: "Proyecto integrador (capstone)", oneLiner: "Integración completa: SLAM + Nav2 + percepción + brazo, o flota coordinada.", tags: ["ROS2", "C++", "Integración"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+    {
+      id: "B1", tier: "basico", title: "Guardia perimetral en C++",
+      oneLiner: "Vigilancia de una zona con lidar: filtrado de ruido, alarma sonora y log de eventos.",
+      description: [
+        "El modo lidar-guard de fábrica (Python) vigila una zona de forma simple. Esta versión en C++ define una zona configurable (ángulo + radio), filtra ruido del sensor para no disparar con falsos positivos, y guarda cada evento (timestamp, ángulo, distancia) en un log consultable.",
+        "La alarma se dispara por el buzzer del robot y opcionalmente apunta el gimbal hacia la zona vigilada."
+      ],
+      demoCaption: "Una persona cruza la zona marcada 3 veces (rápido, lento, quieta) — la alarma dispara cada vez; algo pasando fuera de la zona no dispara falso positivo.",
+      tags: ["ROS2", "C++", "Lidar"],
+      interfaces: ["/scan_raw (sensor_msgs/LaserScan)", "/ros_robot_controller/set_buzzer (ros_robot_controller_msgs/BuzzerState)"],
+      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "B2", tier: "basico", title: "Seguidor de línea adaptativo",
+      oneLiner: "Sigue una línea ajustando la velocidad según la curvatura, con recuperación tras perderla.",
+      description: [
+        "line_following.py (de fábrica) sigue la línea a velocidad constante. Esta versión en C++ estima la curvatura de la línea detectada y adapta la velocidad — más lento en curvas cerradas, más rápido en rectas — y si pierde la línea hace una búsqueda breve antes de abortar, en vez de frenar en seco."
+      ],
+      demoCaption: "Pista con 2 rectas y 2 curvas de radio distinto, medida con cinta métrica. Se compara el tiempo de vuelta contra velocidad constante, y se tapa la línea a mano para mostrar la recuperación.",
+      tags: ["ROS2", "C++", "OpenCV"],
+      interfaces: ["/ascamera/camera_publisher/rgb0/image (sensor_msgs/Image)", "/controller/cmd_vel (geometry_msgs/Twist)", "/scan_raw (sensor_msgs/LaserScan)"],
+      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "B3", tier: "basico", title: "Estación de clasificación por color",
+      oneLiner: "Pipeline propio de percepción → decisión → brazo para clasificar objetos por color.",
+      description: [
+        "En stock, reconocimiento de color y control del brazo son piezas sueltas en Python sin conectar entre sí. Este pipeline en C++ integra percepción LAB, cinemática inversa y control del brazo en una sola máquina de estados (buscando → aproximando → agarrando → soltando) para clasificar objetos de 3 colores hacia 3 posiciones de destino."
+      ],
+      demoCaption: "9-12 objetos de 3 colores mezclados en orden aleatorio, clasificados uno por uno en una toma continua. El README reporta la tasa de éxito real, sin editar los fallos.",
+      tags: ["ROS2", "C++", "Cinemática inversa"],
+      interfaces: ["/kinematics/set_pose_target (kinematics_msgs/srv/SetRobotPose)", "/arm_controller/follow_joint_trajectory (control_msgs/action/FollowJointTrajectory)"],
+      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "I1", tier: "intermedio", title: "Vení hacia mi voz",
+      oneLiner: "Fusión de ángulo de voz (mic array) + distancia de lidar con una máquina de estados propia.",
+      description: [
+        "El stock ya combina esto en Python (voice_control_move.py): ángulo de la fuente sonora del WonderEcho Pro + distancia del lidar + PID para acercarse a quien llama. Esta versión separa la fusión de sensores del reconocimiento de voz en un nodo propio con una máquina de estados explícita: idle → girando hacia la voz → acercándose → detenido."
+      ],
+      demoCaption: "Decir la wake word desde 3 posiciones distintas alrededor del robot; repetir tapando el micrófono a mitad de giro para verificar que no se descontrola sin señal.",
+      tags: ["ROS2", "C++", "Fusión de sensores"],
+      interfaces: ["/awake_node/angle (std_msgs/Int32)", "/awake_node/awake_flag (std_msgs/Bool)", "/scan_raw (sensor_msgs/LaserScan)"],
+      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "I2", tier: "intermedio", title: "Evitación de obstáculos VFH",
+      oneLiner: "Vector Field Histogram propio como capa de seguridad reactiva sobre el lidar.",
+      description: [
+        "El modo obstacle-avoidance de fábrica esquiva con un criterio simple (si hay algo cerca, girar). Esta versión implementa Vector Field Histogram real, corriendo como capa de seguridad de bajo nivel independiente, en paralelo a Nav2 o al teleop."
+      ],
+      demoCaption: "Pasillo con 2-3 obstáculos sin mapa previo; se mueve un obstáculo a mano mientras el robot ya está esquivando el anterior, para verificar reacción a un obstáculo dinámico.",
+      tags: ["ROS2", "C++", "Robótica móvil"],
+      interfaces: ["/scan_raw (sensor_msgs/LaserScan)", "/controller/cmd_vel (geometry_msgs/Twist)"],
+      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "I3", tier: "intermedio", title: "Visual servoing",
+      oneLiner: "Seguimiento de un objetivo con control PID en lazo cerrado sobre cámara.",
+      description: [
+        "Seguimiento de un color/marcador con un controlador PID en C++ en dos ejes, moviendo la base o el brazo para centrar el objetivo en el frame, usando OpenCV C++ directo."
+      ],
+      demoCaption: "Mover el objetivo a mano en línea recta, zigzag, y sacándolo del cuadro; se grafica el error de centrado en vivo con rqt_plot.",
+      tags: ["ROS2", "C++", "OpenCV", "Control"],
+      interfaces: ["/ascamera/camera_publisher/rgb0/image (sensor_msgs/Image)", "servo_controller (servo_controller_msgs/ServosPosition)"],
+      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "I4", tier: "intermedio", title: "Plataforma robusta",
+      oneLiner: "Watchdog de cmd_vel, diagnósticos agregados y odometría propia con covarianza real.",
+      description: [
+        "Tres piezas de ingeniería que en un robot real van juntas: watchdog de cmd_vel con rate-limiting de aceleración, agregador de diagnósticos sobre batería/lidar/cámara, y odometría propia con covarianza calculada correctamente (no identidad hardcodeada), comparada contra la odometría de fábrica."
+      ],
+      demoCaption: "Cortar el teleop a mitad de marcha y cronometrar el frenado; desconectar el lidar en vivo; recorrer un cuadrado de 1×1 m y comparar el error de cierre contra la odometría existente.",
+      tags: ["ROS2", "C++", "Observabilidad"],
+      interfaces: ["/ros_robot_controller/battery (std_msgs/UInt16)", "/controller/cmd_vel (geometry_msgs/Twist)", "/diagnostics (diagnostic_msgs/DiagnosticArray)"],
+      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "I5", tier: "intermedio", title: "Action server para el brazo",
+      oneLiner: "Secuencia de pick con feedback de progreso y cancelación segura.",
+      description: [
+        "Un action propio (PickAt) que orquesta la secuencia completa de pick — aproximarse, descender, cerrar gripper, levantar — con feedback de progreso por fase y cancelación segura real, sobre la cinemática inversa y las acciones de trayectoria ya existentes."
+      ],
+      demoCaption: "Pedir el pick desde 5 posiciones distintas sobre la mesa y contar tasa de éxito real; grabar un cancel a mitad de movimiento.",
+      tags: ["ROS2", "C++", "Actions"],
+      interfaces: ["/kinematics/set_pose_target (kinematics_msgs/srv/SetRobotPose)", "/gripper_controller/follow_joint_trajectory (control_msgs/action/FollowJointTrajectory)"],
+      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "I6", tier: "intermedio", title: "Hardware interface de ros2_control",
+      oneLiner: "Migración del control ad-hoc al framework estándar de la industria.",
+      description: [
+        "Portar el control de motores/servos al framework estándar ros2_control (hardware_interface::SystemInterface en C++), reemplazando el driver casero por el que usan robots reales en la industria."
+      ],
+      demoCaption: "Mismo movimiento de teleop corrido primero con el driver viejo y después con ros2_control, side by side, mostrando ros2 control list_controllers en vivo.",
+      tags: ["ROS2", "C++", "ros2_control"],
+      interfaces: ["/ros_robot_controller/set_motor (ros_robot_controller_msgs/MotorsState)", "/ros_robot_controller/bus_servo/set_position"],
+      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "A1", tier: "avanzado", title: "Plugin custom de Nav2",
+      oneLiner: "Controller o costmap layer propio cargado por pluginlib, comparado contra DWB/TEB.",
+      description: [
+        "Un nav2_core::Controller propio o una capa de costmap custom (ej. zona prohibida dinámica detectada por cámara), cargado por pluginlib y comparado en el mismo mapa contra los planificadores DWB/TEB ya configurados."
+      ],
+      demoCaption: "Mismo mapa y destino navegado con DWB, con TEB y con el plugin propio; tres corridas comparadas en tiempo, distancia y paradas.",
+      tags: ["ROS2", "C++", "Nav2"],
+      interfaces: ["navigate_to_pose (nav2_msgs/action/NavigateToPose)", "nav2_params.yaml"],
+      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "A2", tier: "avanzado", title: "Fusión de percepción lidar + YOLO",
+      oneLiner: "Estimación de posición 3D de objetos fusionando detecciones 2D con el lidar.",
+      description: [
+        "Fusión de clusters de /scan_raw con detecciones 2D de YOLO para estimar la posición 3D de objetos, publicada como TF por objeto."
+      ],
+      demoCaption: "TF en RViz comparado contra distancia real medida a mano; tapar la cámara y verificar que no alucina posiciones viejas.",
+      tags: ["ROS2", "C++", "YOLO", "Percepción"],
+      interfaces: ["/yolo_node/object_detect (interfaces/msg/ObjectsInfo)", "/ascamera/camera_publisher/rgb0/camera_info (sensor_msgs/CameraInfo)"],
+      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "A3", tier: "avanzado", title: "Mini stack de conducción autónoma",
+      oneLiner: "Carril + señales + semáforo integrados en una sola arquitectura de decisión.",
+      description: [
+        "El curso de fábrica resuelve carril, señales y semáforo por separado en Python sobre una pista física con props. Esta versión integra las tres cosas en una sola arquitectura de decisión (percepción → máquina de estados → control) en C++.",
+        "Requiere reentrenar el modelo YOLO para señales de tránsito, ya que el modelo desplegado por defecto clasifica residuos, no carteles ni semáforos."
+      ],
+      demoCaption: "Vuelta completa al circuito respetando semáforo y cartel de stop sin salirse del carril, cronometrada, alterando el orden de los eventos entre corridas.",
+      tags: ["ROS2", "C++", "YOLO", "Visión"],
+      interfaces: ["/yolo_node/object_detect (interfaces/msg/ObjectsInfo)", "/controller/cmd_vel (geometry_msgs/Twist)"],
+      metrics: [], status: "planned", featured: true, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "A4", tier: "avanzado", title: "Misión con Behavior Tree: buscar y traer",
+      oneLiner: "Navegar, encontrar, levantar y confirmar — orquestado con BehaviorTree.CPP.",
+      description: [
+        "Árbol de comportamiento en BehaviorTree.CPP con nodos custom (FindObject, PickAndCarry, AnnounceViaVoice) que orquesta: navegar con Nav2 → buscar objeto con cámara → recogerlo con el brazo → confirmar.",
+        "Es la única demo que muestra al robot completo actuando de punta a punta hacia un objetivo — la pieza central del portfolio."
+      ],
+      demoCaption: "Toma continua sin cortes: 'andá a buscar el objeto X' → navega, lo encuentra, lo levanta, confirma. También se graba un intento con fallback cuando el objeto no está donde se esperaba.",
+      tags: ["ROS2", "C++", "BehaviorTree.CPP", "Nav2"],
+      interfaces: ["navigate_to_pose (nav2_msgs/action/NavigateToPose)", "/yolo_node/object_detect (interfaces/msg/ObjectsInfo)", "acción PickAt (proyecto I5)"],
+      metrics: [], status: "planned", featured: true, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "A5", tier: "avanzado", title: "Formación multi-robot",
+      oneLiner: "Dos LanderPi coordinados manteniendo distancia y ángulo relativo en tiempo real.",
+      description: [
+        "Dos LanderPi en la misma red (namespacing HOST/MASTER ya soportado de fábrica) coordinados con un controlador de formación propio que mantiene distancia y ángulo relativo al líder, en vez del broadcast simple de velocidades del stock."
+      ],
+      demoCaption: "Mover el líder por teleop en un recorrido con 2 giros, medir con cinta métrica que el seguidor mantiene la formación, incluyendo una frenada brusca del líder.",
+      tags: ["ROS2", "C++", "Multi-robot"],
+      interfaces: ["/robot_1/odom", "/robot_2/controller/cmd_vel (namespacing HOST=robot_2)"],
+      metrics: [], status: "planned", featured: true, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
+    {
+      id: "A6", tier: "avanzado", title: "Proyecto integrador (capstone)",
+      oneLiner: "Integración completa: SLAM + Nav2 + percepción + brazo, o flota coordinada.",
+      description: [
+        "Proyecto integrador: elegir entre 'buscar y traer' completo (SLAM + Nav2 con plugin propio + percepción fusionada + misión BT + brazo) o flota coordinada (formación multi-robot + plugin de Nav2), con las buenas prácticas de arquitectura aplicadas a fondo."
+      ],
+      demoCaption: "3 corridas completas end-to-end en 3 configuraciones distintas del mismo espacio, con tasa de éxito reportada honestamente en el README.",
+      tags: ["ROS2", "C++", "Integración"],
+      interfaces: ["Todos los anteriores, integrados"],
+      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+    },
   ];
 
   const TIERS = [
@@ -432,18 +666,14 @@
 
   const STATUS_LABEL = { planned: "Planeado", progress: "En progreso", done: "Completo" };
 
+  function findProject(id) { return PROJECTS.find(p => p.id === id); }
+
   function card(p) {
     const media = p.demoUrl
       ? `<div class="media"><img src="${p.demoUrl}" alt="Demo de ${p.title}" loading="lazy" /></div>`
       : `<div class="media">DEMO PENDIENTE</div>`;
-    const repoLink = p.repoUrl
-      ? `<a href="${p.repoUrl}" target="_blank" rel="noopener">REPO ↗</a>`
-      : `<span class="pending">repo: pendiente</span>`;
-    const liLink = p.linkedinUrl
-      ? `<a href="${p.linkedinUrl}" target="_blank" rel="noopener">POST ↗</a>`
-      : "";
     return `
-      <article class="card" data-tier="${p.tier}" data-featured="${p.featured}">
+      <a class="card" href="#/proyecto/${p.id}" data-tier="${p.tier}" data-featured="${p.featured}">
         <div class="card-top">
           <span class="card-id">${p.id}</span>
           ${p.featured ? '<span class="star">★ recomendado LinkedIn</span>' : ""}
@@ -452,12 +682,14 @@
         <p class="oneliner">${p.oneLiner}</p>
         ${media}
         <div class="tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
-        <span class="status-pill status-${p.status}">${STATUS_LABEL[p.status]}</span>
-        <div class="card-links">${repoLink}${liLink ? " " + liLink : ""}</div>
-      </article>`;
+        <div class="card-bottom">
+          <span class="status-pill status-${p.status}">${STATUS_LABEL[p.status]}</span>
+          <span class="cta">Ver proyecto →</span>
+        </div>
+      </a>`;
   }
 
-  function render(filter) {
+  function renderList(filter) {
     const tiersEl = document.getElementById("tiers");
     tiersEl.innerHTML = TIERS.map(t => {
       const items = PROJECTS.filter(p => p.tier === t.key && (filter === "all" || (filter === "featured" ? p.featured : p.tier === filter)));
@@ -494,13 +726,97 @@
       if (!btn) return;
       [...el.children].forEach(b => b.setAttribute("aria-pressed", "false"));
       btn.setAttribute("aria-pressed", "true");
-      render(btn.dataset.filter);
+      renderList(btn.dataset.filter);
     });
+  }
+
+  /* ---------- Vista de detalle: una "página" por proyecto en #/proyecto/<id> ---------- */
+  function isVideo(url) { return /\.(mp4|webm|ogg)(\?.*)?$/i.test(url); }
+
+  function renderDetail(id) {
+    const el = document.getElementById("view-detail");
+    const p = findProject(id);
+    if (!p) {
+      el.innerHTML = `
+        <a class="back-link" href="#/">← volver a todos los proyectos</a>
+        <div class="detail-empty">No encontré el proyecto "${id}".</div>`;
+      document.title = "No encontrado // LanderPi Portfolio";
+      return;
+    }
+    const media = p.demoUrl
+      ? (isVideo(p.demoUrl)
+          ? `<video src="${p.demoUrl}" controls preload="metadata"></video>`
+          : `<img src="${p.demoUrl}" alt="Demo de ${p.title}" />`)
+      : `DEMO PENDIENTE`;
+    const repoLink = p.repoUrl
+      ? `<a href="${p.repoUrl}" target="_blank" rel="noopener">REPO ↗</a>`
+      : `<span class="pending">repo: pendiente</span>`;
+    const liLink = p.linkedinUrl
+      ? `<a href="${p.linkedinUrl}" target="_blank" rel="noopener">POST DE LINKEDIN ↗</a>`
+      : "";
+    const metricsBlock = p.metrics.length ? `
+      <div class="detail-section">
+        <h2>Resultados</h2>
+        <div class="metrics-table"><table>
+          <thead><tr><th>Métrica</th><th>Resultado</th></tr></thead>
+          <tbody>${p.metrics.map(m => `<tr><td>${m.k}</td><td>${m.v}</td></tr>`).join("")}</tbody>
+        </table></div>
+      </div>` : "";
+
+    el.innerHTML = `
+      <a class="back-link" href="#/">← volver a todos los proyectos</a>
+      <div class="detail-head">
+        <span class="card-id">${p.id}</span>
+        <span class="status-pill status-${p.status}">${STATUS_LABEL[p.status]}</span>
+        ${p.featured ? '<span class="star">★ recomendado LinkedIn</span>' : ""}
+      </div>
+      <h1>${p.title}</h1>
+      <p class="detail-oneliner">${p.oneLiner}</p>
+      <div class="detail-tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
+
+      <div class="detail-media">${media}</div>
+      <div class="callout"><span class="k">Escenario de la demo real</span>${p.demoCaption}</div>
+
+      <div class="detail-section">
+        <h2>Qué hace / qué problema resuelve</h2>
+        ${p.description.map(par => `<p>${par}</p>`).join("")}
+      </div>
+
+      ${metricsBlock}
+
+      <div class="detail-section">
+        <h2>Integración con el stack LanderPi</h2>
+        <div class="interfaces-list">${p.interfaces.map(i => `<code>${i}</code>`).join("")}</div>
+      </div>
+
+      <div class="detail-links">${repoLink}${liLink ? " " + liLink : ""}<a href="#/">← todos los proyectos</a></div>
+    `;
+    document.title = `${p.id} — ${p.title} // LanderPi Portfolio`;
+  }
+
+  /* ---------- Router: alterna entre la lista y el detalle según el hash ---------- */
+  function route() {
+    const hash = location.hash || "#/";
+    const match = hash.match(/^#\/proyecto\/(.+)$/);
+    const listEl = document.getElementById("view-list");
+    const detailEl = document.getElementById("view-detail");
+    if (match) {
+      listEl.hidden = true;
+      detailEl.hidden = false;
+      renderDetail(decodeURIComponent(match[1]));
+      window.scrollTo(0, 0);
+    } else {
+      listEl.hidden = false;
+      detailEl.hidden = true;
+      document.title = "LanderPi // Portfolio Log";
+    }
   }
 
   renderFilters();
   renderTicker();
-  render("all");
+  renderList("all");
+  window.addEventListener("hashchange", route);
+  route();
 
   /* ---------- Theme toggle: cycles Auto -> Dark -> Light ---------- */
   const root = document.documentElement;
