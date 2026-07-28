@@ -1,0 +1,517 @@
+<title>LanderPi // Portfolio Log</title>
+<meta name="description" content="Bitácora de proyectos de robótica en ROS 2 / C++ sobre un robot LanderPi real." />
+<style>
+  /* ---------- Tokens: light (paper/blueprint) is the base, dark (console) overrides ---------- */
+  :root {
+    --bg: #eef2f1;
+    --bg-grid: #d7dfdd;
+    --surface: #ffffff;
+    --surface-raised: #f6f9f8;
+    --line: #d2dbda;
+    --text: #131a1c;
+    --text-muted: #5b6a6d;
+    --text-faint: #869192;
+    --accent: #d9631a;
+    --accent-ink: #ffffff;
+    --telemetry: #1d7e86;
+    --status-done-bg: #e3f3e0;
+    --status-done-fg: #2f6d31;
+    --status-progress-bg: #fbeecb;
+    --status-progress-fg: #8a6412;
+    --status-planned-bg: #e7ebea;
+    --status-planned-fg: #5b6a6d;
+    --radius: 5px;
+    --font-display: "IBM Plex Sans Condensed", "Archivo Narrow", "Arial Narrow", sans-serif;
+    --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1316;
+      --bg-grid: #171f22;
+      --surface: #161e22;
+      --surface-raised: #1d262b;
+      --line: #2b3940;
+      --text: #e7edee;
+      --text-muted: #91a3a8;
+      --text-faint: #5f7075;
+      --accent: #ff8a3d;
+      --accent-ink: #16100a;
+      --telemetry: #7fc7cc;
+      --status-done-bg: #16281a;
+      --status-done-fg: #7fd487;
+      --status-progress-bg: #2b2410;
+      --status-progress-fg: #e8c547;
+      --status-planned-bg: #1d262b;
+      --status-planned-fg: #7c8c90;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0d1316;
+    --bg-grid: #171f22;
+    --surface: #161e22;
+    --surface-raised: #1d262b;
+    --line: #2b3940;
+    --text: #e7edee;
+    --text-muted: #91a3a8;
+    --text-faint: #5f7075;
+    --accent: #ff8a3d;
+    --accent-ink: #16100a;
+    --telemetry: #7fc7cc;
+    --status-done-bg: #16281a;
+    --status-done-fg: #7fd487;
+    --status-progress-bg: #2b2410;
+    --status-progress-fg: #e8c547;
+    --status-planned-bg: #1d262b;
+    --status-planned-fg: #7c8c90;
+  }
+
+  :root[data-theme="light"] {
+    --bg: #eef2f1;
+    --bg-grid: #d7dfdd;
+    --surface: #ffffff;
+    --surface-raised: #f6f9f8;
+    --line: #d2dbda;
+    --text: #131a1c;
+    --text-muted: #5b6a6d;
+    --text-faint: #869192;
+    --accent: #d9631a;
+    --accent-ink: #ffffff;
+    --telemetry: #1d7e86;
+    --status-done-bg: #e3f3e0;
+    --status-done-fg: #2f6d31;
+    --status-progress-bg: #fbeecb;
+    --status-progress-fg: #8a6412;
+    --status-planned-bg: #e7ebea;
+    --status-planned-fg: #5b6a6d;
+  }
+
+  * { box-sizing: border-box; }
+  html { color-scheme: light dark; }
+
+  body {
+    margin: 0;
+    background:
+      repeating-linear-gradient(0deg, var(--bg-grid) 0, var(--bg-grid) 1px, transparent 1px, transparent 40px),
+      repeating-linear-gradient(90deg, var(--bg-grid) 0, var(--bg-grid) 1px, transparent 1px, transparent 40px),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--telemetry); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: 0.01em; }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- Top telemetry bar ---------- */
+  .topbar {
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: blur(6px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 24px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+  }
+  .status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--status-done-fg);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--status-done-fg) 20%, transparent);
+    margin-right: 6px;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @media (prefers-reduced-motion: reduce) { .status-dot { animation: none; } }
+
+  .theme-toggle {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--text-muted);
+    border-radius: var(--radius);
+    padding: 4px 10px;
+    cursor: pointer;
+  }
+  .theme-toggle:hover { border-color: var(--telemetry); color: var(--telemetry); }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 64px 0 40px; }
+  .hero h1 {
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
+    font-weight: 600;
+    max-width: 18ch;
+    margin-top: 10px;
+  }
+  .hero .lede {
+    max-width: 62ch;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    margin-top: 18px;
+  }
+  .hero .links { margin-top: 22px; display: flex; gap: 18px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 0.85rem; }
+  .hero .links a { color: var(--text); border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+  .hero .links a:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ---------- Spec strip ---------- */
+  .specstrip {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .spec {
+    padding: 14px 16px;
+    border-left: 1px solid var(--line);
+  }
+  .spec:first-child { border-left: none; }
+  .spec .k { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+  .spec .v { font-family: var(--font-mono); font-size: 0.92rem; color: var(--telemetry); margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Summary ticker ---------- */
+  .ticker {
+    margin-top: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .ticker b { color: var(--text); font-variant-numeric: tabular-nums; }
+
+  /* ---------- Filters ---------- */
+  .filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 40px 0 8px;
+  }
+  .filter-btn {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--text-muted);
+    border-radius: var(--radius);
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  .filter-btn:hover { color: var(--text); border-color: var(--telemetry); }
+  .filter-btn[aria-pressed="true"] {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+
+  /* ---------- Tier sections ---------- */
+  .tier { margin-top: 44px; }
+  .tier-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+  .tier-head h2 { font-size: 1.5rem; }
+  .tier-head .count { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-faint); }
+  .tier-desc { color: var(--text-muted); max-width: 68ch; margin: 12px 0 22px; font-size: 0.95rem; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  /* ---------- Project card ---------- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .card:hover { border-color: var(--telemetry); transform: translateY(-2px); }
+  .card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .card-id {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--telemetry);
+    border: 1px solid color-mix(in srgb, var(--telemetry) 45%, transparent);
+    border-radius: 4px;
+    padding: 1px 7px;
+  }
+  .star { color: var(--accent); font-size: 0.8rem; font-family: var(--font-mono); white-space: nowrap; }
+  .card h3 { font-size: 1.1rem; line-height: 1.3; }
+  .card .oneliner { color: var(--text-muted); font-size: 0.92rem; }
+
+  .media {
+    aspect-ratio: 16 / 9;
+    border: 1px dashed var(--line);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    overflow: hidden;
+    background: var(--surface-raised);
+  }
+  .media img, .media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    background: var(--surface-raised);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 2px 7px;
+  }
+
+  .status-pill {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 3px;
+    padding: 3px 8px;
+  }
+  .status-planned { background: var(--status-planned-bg); color: var(--status-planned-fg); }
+  .status-progress { background: var(--status-progress-bg); color: var(--status-progress-fg); }
+  .status-done { background: var(--status-done-bg); color: var(--status-done-fg); }
+
+  .card-links { display: flex; gap: 14px; font-family: var(--font-mono); font-size: 0.78rem; margin-top: auto; padding-top: 4px; border-top: 1px solid var(--line); }
+  .card-links a { color: var(--text); }
+  .card-links a:hover { color: var(--accent); }
+  .card-links .pending { color: var(--text-faint); }
+
+  /* ---------- Footer ---------- */
+  footer {
+    margin-top: 72px;
+    border-top: 1px solid var(--line);
+    padding: 28px 0 48px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-faint);
+  }
+  footer .links { display: flex; gap: 18px; margin-top: 10px; flex-wrap: wrap; }
+  footer a { color: var(--text-muted); }
+  footer a:hover { color: var(--accent); }
+
+  @media (max-width: 560px) {
+    .hero { padding: 44px 0 28px; }
+    .specstrip { grid-template-columns: repeat(2, 1fr); }
+    .spec:nth-child(2n+1) { border-left: none; }
+  }
+</style>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span><span class="status-dot" aria-hidden="true"></span>LANDERPI // PORTFOLIO_LOG — STATUS: ONLINE</span>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false">MODO: AUTO</button>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">UNIDAD LANDERPI-01 · REGISTRO DE INGENIERÍA</p>
+    <h1>Robótica real, en C++, sobre hardware real.</h1>
+    <p class="lede">
+      Bitácora de proyectos construidos sobre un LanderPi (ROS 2 / Raspberry Pi 5): cada
+      entrada es un sistema completo — percepción, decisión y control — probado y
+      grabado sobre el robot físico, no en simulación. Acá vas a encontrar el repo, la
+      demo real y qué problema de robótica resuelve cada uno.
+    </p>
+    <p class="lede">
+      <!-- EDITAR: reemplazá estos enlaces por los tuyos -->
+    </p>
+    <div class="links">
+      <a href="https://github.com/TU_USUARIO" target="_blank" rel="noopener">GITHUB ↗</a>
+      <a href="https://www.linkedin.com/in/TU_USUARIO" target="_blank" rel="noopener">LINKEDIN ↗</a>
+    </div>
+
+    <div class="specstrip">
+      <div class="spec"><div class="k">Chasis</div><div class="v">Mecanum, 4WD</div></div>
+      <div class="spec"><div class="k">Brazo</div><div class="v">6 GDL, bus servo</div></div>
+      <div class="spec"><div class="k">Lidar</div><div class="v">MS200, TOF</div></div>
+      <div class="spec"><div class="k">Cámara</div><div class="v">Aurora930, RGB-D</div></div>
+      <div class="spec"><div class="k">Audio</div><div class="v">WonderEcho Pro</div></div>
+      <div class="spec"><div class="k">Cómputo</div><div class="v">Raspberry Pi 5</div></div>
+    </div>
+
+    <p class="ticker" id="ticker"><!-- se completa por JS --></p>
+  </section>
+
+  <div class="filters" id="filters" role="group" aria-label="Filtrar proyectos"></div>
+
+  <div id="tiers"><!-- se completa por JS --></div>
+
+  <footer>
+    <p>FIN DE TRANSMISIÓN — bitácora generada a partir del plan de proyectos LanderPi.</p>
+    <div class="links">
+      <a href="https://github.com/TU_USUARIO" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/TU_USUARIO" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </footer>
+</main>
+
+<script>
+  /* =====================================================================
+     PLANTILLA A RELLENAR
+     Un objeto por proyecto. Copiá el bloque de un proyecto ya resuelto
+     como punto de partida para el siguiente. Campos:
+
+     id          : el mismo ID que usás en PORTFOLIO_PROJECTS.md (B1, I3, A4...)
+     tier        : "basico" | "intermedio" | "avanzado"
+     title       : nombre corto del proyecto
+     oneLiner    : una oración, qué problema resuelve
+     tags        : array de strings cortos (tecnologías/conceptos)
+     status      : "planned" | "progress" | "done"
+     featured    : true si es de los que vas a promocionar en LinkedIn
+     repoUrl     : "" hasta que exista el repo (se muestra "pendiente")
+     demoUrl     : URL de un GIF/imagen/video corto (se muestra placeholder si está vacío)
+     linkedinUrl : "" hasta que publiques el post
+     ===================================================================== */
+  const PROJECTS = [
+    { id: "B1", tier: "basico", title: "Guardia perimetral en C++", oneLiner: "Vigilancia de una zona con lidar: filtrado de ruido, alarma sonora y log de eventos.", tags: ["ROS2", "C++", "Lidar"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+    { id: "B2", tier: "basico", title: "Seguidor de línea adaptativo", oneLiner: "Sigue una línea ajustando la velocidad según la curvatura, con recuperación tras perderla.", tags: ["ROS2", "C++", "OpenCV"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+    { id: "B3", tier: "basico", title: "Estación de clasificación por color", oneLiner: "Pipeline propio de percepción → decisión → brazo para clasificar objetos por color.", tags: ["ROS2", "C++", "Cinemática inversa"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+
+    { id: "I1", tier: "intermedio", title: "Vení hacia mi voz", oneLiner: "Fusión de ángulo de voz (mic array) + distancia de lidar con una máquina de estados propia.", tags: ["ROS2", "C++", "Fusión de sensores"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+    { id: "I2", tier: "intermedio", title: "Evitación de obstáculos VFH", oneLiner: "Vector Field Histogram propio como capa de seguridad reactiva sobre el lidar.", tags: ["ROS2", "C++", "Robótica móvil"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+    { id: "I3", tier: "intermedio", title: "Visual servoing", oneLiner: "Seguimiento de un objetivo con control PID en lazo cerrado sobre cámara.", tags: ["ROS2", "C++", "OpenCV", "Control"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+    { id: "I4", tier: "intermedio", title: "Plataforma robusta", oneLiner: "Watchdog de cmd_vel, diagnósticos agregados y odometría propia con covarianza real.", tags: ["ROS2", "C++", "Observabilidad"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+    { id: "I5", tier: "intermedio", title: "Action server para el brazo", oneLiner: "Secuencia de pick con feedback de progreso y cancelación segura.", tags: ["ROS2", "C++", "Actions"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+    { id: "I6", tier: "intermedio", title: "Hardware interface de ros2_control", oneLiner: "Migración del control ad-hoc al framework estándar de la industria.", tags: ["ROS2", "C++", "ros2_control"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+
+    { id: "A1", tier: "avanzado", title: "Plugin custom de Nav2", oneLiner: "Controller o costmap layer propio cargado por pluginlib, comparado contra DWB/TEB.", tags: ["ROS2", "C++", "Nav2"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+    { id: "A2", tier: "avanzado", title: "Fusión de percepción lidar + YOLO", oneLiner: "Estimación de posición 3D de objetos fusionando detecciones 2D con el lidar.", tags: ["ROS2", "C++", "YOLO", "Percepción"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+    { id: "A3", tier: "avanzado", title: "Mini stack de conducción autónoma", oneLiner: "Carril + señales + semáforo integrados en una sola arquitectura de decisión.", tags: ["ROS2", "C++", "YOLO", "Visión"], status: "planned", featured: true, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+    { id: "A4", tier: "avanzado", title: "Misión con Behavior Tree: buscar y traer", oneLiner: "Navegar, encontrar, levantar y confirmar — orquestado con BehaviorTree.CPP.", tags: ["ROS2", "C++", "BehaviorTree.CPP", "Nav2"], status: "planned", featured: true, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+    { id: "A5", tier: "avanzado", title: "Formación multi-robot", oneLiner: "Dos LanderPi coordinados manteniendo distancia y ángulo relativo en tiempo real.", tags: ["ROS2", "C++", "Multi-robot"], status: "planned", featured: true, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+    { id: "A6", tier: "avanzado", title: "Proyecto integrador (capstone)", oneLiner: "Integración completa: SLAM + Nav2 + percepción + brazo, o flota coordinada.", tags: ["ROS2", "C++", "Integración"], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: "" },
+  ];
+
+  const TIERS = [
+    { key: "basico", label: "Nivel básico", desc: "Sistemas chicos pero completos: percepción → decisión → acción, cada uno con una demo que se graba bien de punta a punta." },
+    { key: "intermedio", label: "Nivel intermedio", desc: "Ingeniería de plataforma: fusión de sensores, actions con feedback/cancelación, y el framework estándar de control (ros2_control)." },
+    { key: "avanzado", label: "Nivel avanzado", desc: "Arquitectura de sistema completo: plugins de Nav2, fusión de percepción, árboles de comportamiento y coordinación multi-robot." },
+  ];
+
+  const STATUS_LABEL = { planned: "Planeado", progress: "En progreso", done: "Completo" };
+
+  function card(p) {
+    const media = p.demoUrl
+      ? `<div class="media"><img src="${p.demoUrl}" alt="Demo de ${p.title}" loading="lazy" /></div>`
+      : `<div class="media">DEMO PENDIENTE</div>`;
+    const repoLink = p.repoUrl
+      ? `<a href="${p.repoUrl}" target="_blank" rel="noopener">REPO ↗</a>`
+      : `<span class="pending">repo: pendiente</span>`;
+    const liLink = p.linkedinUrl
+      ? `<a href="${p.linkedinUrl}" target="_blank" rel="noopener">POST ↗</a>`
+      : "";
+    return `
+      <article class="card" data-tier="${p.tier}" data-featured="${p.featured}">
+        <div class="card-top">
+          <span class="card-id">${p.id}</span>
+          ${p.featured ? '<span class="star">★ recomendado LinkedIn</span>' : ""}
+        </div>
+        <h3>${p.title}</h3>
+        <p class="oneliner">${p.oneLiner}</p>
+        ${media}
+        <div class="tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
+        <span class="status-pill status-${p.status}">${STATUS_LABEL[p.status]}</span>
+        <div class="card-links">${repoLink}${liLink ? " " + liLink : ""}</div>
+      </article>`;
+  }
+
+  function render(filter) {
+    const tiersEl = document.getElementById("tiers");
+    tiersEl.innerHTML = TIERS.map(t => {
+      const items = PROJECTS.filter(p => p.tier === t.key && (filter === "all" || (filter === "featured" ? p.featured : p.tier === filter)));
+      if (!items.length) return "";
+      return `
+        <section class="tier">
+          <div class="tier-head"><h2>${t.label}</h2><span class="count">${items.length} proyecto${items.length === 1 ? "" : "s"}</span></div>
+          <p class="tier-desc">${t.desc}</p>
+          <div class="grid">${items.map(card).join("")}</div>
+        </section>`;
+    }).join("");
+  }
+
+  function renderTicker() {
+    const done = PROJECTS.filter(p => p.status === "done").length;
+    const progress = PROJECTS.filter(p => p.status === "progress").length;
+    const featured = PROJECTS.filter(p => p.featured).length;
+    document.getElementById("ticker").innerHTML =
+      `<b>${done}/${PROJECTS.length}</b> completados · <b>${progress}</b> en progreso · <b>${featured}</b> destacados para difusión`;
+  }
+
+  function renderFilters() {
+    const opts = [
+      { key: "all", label: "Todos" },
+      { key: "featured", label: "★ Destacados" },
+      ...TIERS.map(t => ({ key: t.key, label: t.label })),
+    ];
+    const el = document.getElementById("filters");
+    el.innerHTML = opts.map((o, i) =>
+      `<button class="filter-btn" data-filter="${o.key}" aria-pressed="${i === 0}">${o.label}</button>`
+    ).join("");
+    el.addEventListener("click", (e) => {
+      const btn = e.target.closest(".filter-btn");
+      if (!btn) return;
+      [...el.children].forEach(b => b.setAttribute("aria-pressed", "false"));
+      btn.setAttribute("aria-pressed", "true");
+      render(btn.dataset.filter);
+    });
+  }
+
+  renderFilters();
+  renderTicker();
+  render("all");
+
+  /* ---------- Theme toggle: cycles Auto -> Dark -> Light ---------- */
+  const root = document.documentElement;
+  const toggle = document.getElementById("themeToggle");
+  const modes = ["auto", "dark", "light"];
+  let modeIndex = 0;
+  toggle.addEventListener("click", () => {
+    modeIndex = (modeIndex + 1) % modes.length;
+    const mode = modes[modeIndex];
+    if (mode === "auto") root.removeAttribute("data-theme");
+    else root.setAttribute("data-theme", mode);
+    toggle.textContent = "MODO: " + mode.toUpperCase();
+  });
+</script>
