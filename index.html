@@ -350,7 +350,7 @@
     font-size: 0.8rem;
     color: var(--text-faint);
   }
-  .detail-media img, .detail-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .detail-media img, .detail-media video { width: 100%; height: 100%; object-fit: contain; display: block; background: #000; }
 
   .callout {
     margin-top: 18px;
@@ -490,26 +490,56 @@
   const PROJECTS = [
     {
       id: "B1", tier: "basico", title: "Guardia perimetral en C++",
-      oneLiner: "Vigilancia de una zona con lidar: filtrado de ruido, alarma sonora y log de eventos.",
+      oneLiner: "Vigilancia de una zona con lidar: filtrado de ruido por mediana, alarma sonora, historial de eventos y el brazo apuntando hacia la intrusión.",
       description: [
-        "El modo lidar-guard de fábrica (Python) vigila una zona de forma simple. Esta versión en C++ define una zona configurable (ángulo + radio), filtra ruido del sensor para no disparar con falsos positivos, y guarda cada evento (timestamp, ángulo, distancia) en un log consultable.",
-        "La alarma se dispara por el buzzer del robot y opcionalmente apunta el gimbal hacia la zona vigilada."
+        "Reemplaza el modo 3 (lidar-guard) de lidar_controller.py del stack Python de fábrica. Vigila un sector angular configurable (ángulo mínimo/máximo + radio, con soporte de wraparound) sobre el lidar crudo, y solo confirma una intrusión si la mediana de una ventana de N scans cae por debajo del radio: un outlier de un solo frame no alcanza para disparar.",
+        "Al confirmar una intrusión hace sonar el buzzer del robot, publica un GuardEvent (timestamp, ángulo, distancia) en ~/events y lo agrega a un archivo de log. Además, el brazo de 6 GDL apunta hacia la intrusión: el ángulo se convierte en una pose XYZ que resuelve el servicio de cinemática inversa del stock, se clampea al límite real de la junta base (±120°) y el brazo vuelve a una pose de reposo plegada cuando la zona queda despejada.",
+        "Probándolo en el robot apareció un bug real: el driver LD19 publica el LaserScan en 0–360° y no en −180/180°, así que la mitad de una zona simétrica quedaba ciega. Ahora cada lectura se normaliza antes de compararla con la zona, y hay un test de regresión para ese caso.",
+        "Incluye un modo de configuración de poses en caliente: se mueve el brazo junta por junta con el teclado y se guardan las poses de reposo y de apuntado sin recompilar ni tocar el YAML. ZoneMonitor y ArmAimCalculator son clases puras sin rclcpp, testeadas con gtest, dentro de un nodo con ciclo de vida (rclcpp_lifecycle)."
       ],
-      demoCaption: "Una persona cruza la zona marcada 3 veces (rápido, lento, quieta) — la alarma dispara cada vez; algo pasando fuera de la zona no dispara falso positivo.",
-      tags: ["ROS2", "C++", "Lidar"],
-      interfaces: ["/scan_raw (sensor_msgs/LaserScan)", "/ros_robot_controller/set_buzzer (ros_robot_controller_msgs/BuzzerState)"],
-      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+      demoCaption: "Una intrusión entra en el sector vigilado por el lidar: suena la alarma y el brazo gira para apuntar hacia el lugar donde se detectó.",
+      tags: ["ROS2", "C++", "Lidar", "Cinemática inversa", "gtest"],
+      interfaces: [
+        "/scan_raw (sensor_msgs/LaserScan, BEST_EFFORT)",
+        "/ros_robot_controller/set_buzzer (ros_robot_controller_msgs/BuzzerState)",
+        "~/events (landerpi_perimeter_guard_msgs/GuardEvent)",
+        "/kinematics/set_pose_target (kinematics_msgs/srv/SetRobotPose)",
+        "servo_controller (servo_controller_msgs/ServosPosition)",
+        "~/init_finish (std_srvs/Trigger)"
+      ],
+      metrics: [], status: "done", featured: false,
+      repoUrl: "https://github.com/lucasdavalle/landerpi-perimeter-guard",
+      demoUrl: "media/b1-demo.mp4", linkedinUrl: ""
     },
     {
       id: "B2", tier: "basico", title: "Seguidor de línea adaptativo",
-      oneLiner: "Sigue una línea ajustando la velocidad según la curvatura, con recuperación tras perderla.",
+      oneLiner: "Sigue una línea adaptando la velocidad a la curvatura, la recupera espiando con el brazo y frena con el lidar ante un obstáculo.",
       description: [
-        "line_following.py (de fábrica) sigue la línea a velocidad constante. Esta versión en C++ estima la curvatura de la línea detectada y adapta la velocidad — más lento en curvas cerradas, más rápido en rectas — y si pierde la línea hace una búsqueda breve antes de abortar, en vez de frenar en seco."
+        "Reemplaza line_following.py del stack Python de fábrica, que sigue la línea a velocidad fija y frena en seco cuando la pierde. La visión usa tres bandas horizontales de la cámara (cerca, media y lejos): además del desvío lateral, que corrige un PID sobre la velocidad angular, estima qué tan cerrada viene la curva.",
+        "La velocidad lineal se adapta en tiempo real con v = clamp(v_max − k·|curvatura|, v_min, v_max): acelera en recta y frena de forma proporcional en curva cerrada. Si no las tres bandas ven la línea, usa una velocidad conservadora en vez de suponer que es una recta.",
+        "Si pierde la línea no gira el chasis a ciegas. Con el robot detenido, barre con el brazo (que lleva la cámara) primero a la derecha y después a la izquierda, frenando apenas encuentra la línea. Luego gira el chasis justo lo necesario, integrando el yaw real del IMU en vez de girar durante un tiempo fijo, y retoma la marcha.",
+        "Por seguridad, el lidar frontal corta la marcha si detecta un objeto a menos de 20 cm, sin importar en qué estado esté el robot, y retoma solo apenas se despeja el camino. Activar el nodo (rclcpp_lifecycle) nunca mueve el robot: hace falta un arranque explícito, que se rechaza si el color no está calibrado. La calibración se hace con un script, clickeando la línea sobre el feed de la cámara.",
+        "LineTracker, Pid y ZoneMonitor (reusado de B1) son clases puras sin rclcpp, testeadas con gtest. Las 6 etapas de desarrollo se probaron de forma incremental sobre el robot físico, sin simulación. Un aprendizaje del tuning: bajar la ganancia proporcional para suavizar una oscilación la empeoró, porque a mayor velocidad hace falta más autoridad de corrección al salir de una curva, no menos. Incluye además un lap tracker por odometría para comparar el tiempo, la distancia y la velocidad promedio entre pruebas."
       ],
-      demoCaption: "Pista con 2 rectas y 2 curvas de radio distinto, medida con cinta métrica. Se compara el tiempo de vuelta contra velocidad constante, y se tapa la línea a mano para mostrar la recuperación.",
-      tags: ["ROS2", "C++", "OpenCV"],
-      interfaces: ["/ascamera/camera_publisher/rgb0/image (sensor_msgs/Image)", "/controller/cmd_vel (geometry_msgs/Twist)", "/scan_raw (sensor_msgs/LaserScan)"],
-      metrics: [], status: "planned", featured: false, repoUrl: "", demoUrl: "", linkedinUrl: ""
+      demoCaption: "Vuelta completa a un circuito cerrado de cinta con rectas y curvas de distinto radio. Al final se pone una mano delante del robot y frena por el lidar.",
+      tags: ["ROS2", "C++", "OpenCV", "PID", "IMU", "Lidar", "gtest"],
+      interfaces: [
+        "/ascamera/camera_publisher/rgb0/image (sensor_msgs/Image)",
+        "/controller/cmd_vel (geometry_msgs/Twist)",
+        "/ros_robot_controller/imu_raw (sensor_msgs/Imu)",
+        "/scan_raw (sensor_msgs/LaserScan, BEST_EFFORT)",
+        "/odom_raw (nav_msgs/Odometry)",
+        "servo_controller (servo_controller_msgs/ServosPosition)",
+        "~/set_running (std_srvs/SetBool) · ~/set_target_color (interfaces/SetPoint) · ~/reset · ~/get_lap_stats"
+      ],
+      metrics: [
+        { k: "Velocidad lineal confirmada en el robot", v: "hasta 0.50 m/s (mín. 0.20 m/s)" },
+        { k: "PID angular confirmado (kp / ki / kd)", v: "0.010 / 0.0 / 0.002" },
+        { k: "Distancia de corte por obstáculo", v: "20 cm (sector frontal ±20°)" }
+      ],
+      status: "done", featured: false,
+      repoUrl: "https://github.com/lucasdavalle/landerpi-adaptive-line-follower",
+      demoUrl: "media/b2-demo.mp4", linkedinUrl: ""
     },
     {
       id: "B3", tier: "basico", title: "Estación de clasificación por color",
@@ -670,7 +700,9 @@
 
   function card(p) {
     const media = p.demoUrl
-      ? `<div class="media"><img src="${p.demoUrl}" alt="Demo de ${p.title}" loading="lazy" /></div>`
+      ? (isVideo(p.demoUrl)
+          ? `<div class="media"><video src="${p.demoUrl}" muted autoplay loop playsinline preload="metadata" aria-label="Demo de ${p.title}"></video></div>`
+          : `<div class="media"><img src="${p.demoUrl}" alt="Demo de ${p.title}" loading="lazy" /></div>`)
       : `<div class="media">DEMO PENDIENTE</div>`;
     return `
       <a class="card" href="#/proyecto/${p.id}" data-tier="${p.tier}" data-featured="${p.featured}">

@@ -1,7 +1,7 @@
 # Lucas Dávalle
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-lucas--davalle-0A66C2?logo=linkedin\&logoColor=white)](https://www.linkedin.com/in/lucas-davalle)
-[![Portfolio](https://img.shields.io/badge/Portfolio-lucasdavalle.github.io-orange)](https://lucasdavalle.github.io)
+[![Portfolio](https://img.shields.io/badge/Portfolio-lucasdavalle.github.io-orange)](https://lucasdavalle.github.io/lucasdavalle/)
 
 **Electronic Engineer | Robotics & Embedded Systems | Java Backend Developer**
 
@@ -9,12 +9,12 @@ I am an Electronic Engineer and software developer focused on **robotics, embedd
 
 Currently, I am focusing on **ROS 2, ROS 1, C++, and robotic systems**, combining my background in electronics and software development to build and test robotics projects both in simulation and on real hardware.
 
-[View my robotics portfolio](https://lucasdavalle.github.io) — documentation and demonstrations of my ROS 2/C++ projects, including work with the LanderPi robot.
+[View my robotics portfolio](https://lucasdavalle.github.io/lucasdavalle/) — documentation and demonstrations of my ROS 2/C++ projects, including work with the LanderPi robot.
 
 ## Robotics
 
 * Developing a **ROS 2 Humble + C++** workspace with a simulated Mars rover, working with topics, services, actions, executors, component composition, and computer vision.
-* Developing software for **LanderPi**, a robotic platform with a mecanum base, 6-DOF robotic arm, and LiDAR, using C++ for robot control and perception.
+* Developing software for **LanderPi**, a robotic platform with a mecanum base, 6-DOF robotic arm, camera, and LiDAR, using C++ for robot control and perception. Completed so far: a LiDAR perimeter guard and an adaptive line follower, both tested on the real robot.
 * Completed a **ROS 1 Noetic + C++** workspace with a TurtleBot3 capable of autonomous wall following.
 * Developed a **competitive sumo robot in C**.
 * Developed a **Braille printer** as an assistive technology project.
@@ -53,7 +53,8 @@ My experience in backend development and distributed systems complements my back
 
 | Project                                                                                            | Description                                                                                                                                                |
 | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [landerpi-adaptive-line-follower](https://github.com/lucasdavalle/landerpi-adaptive-line-follower) | Adaptive line follower developed in C++ for LanderPi. Estimates line curvature to dynamically adjust speed and uses the robotic arm camera for perception. |
+| [landerpi-perimeter-guard](https://github.com/lucasdavalle/landerpi-perimeter-guard) | LiDAR perimeter guard in C++ for LanderPi. Monitors a configurable zone with median noise filtering, sounds an alarm, logs every intrusion, and points the 6-DOF arm toward it using inverse kinematics. |
+| [landerpi-adaptive-line-follower](https://github.com/lucasdavalle/landerpi-adaptive-line-follower) | Adaptive line follower in C++ for LanderPi. Adjusts speed to the estimated curvature, recovers a lost line by sweeping the arm-mounted camera and turning with IMU feedback, and stops for obstacles using LiDAR. |
 | [ros2-mars-rover-cpp](https://github.com/lucasdavalle/ros2-mars-rover-cpp)                         | ROS 2 Humble + C++ workspace with a simulated Mars rover, covering topics, services, actions, executors, component composition, and computer vision.       |
 | [ros-fundamentals-cpp](https://github.com/lucasdavalle/ros-fundamentals-cpp)                       | ROS 1 Noetic + C++ workspace with a TurtleBot3 capable of autonomous wall following.                                                                       |
 | [Robot-Sumo](https://github.com/lucasdavalle/Robot-Sumo)                                           | Competitive sumo robot developed in C.                                                                                                                     |
@@ -63,4 +64,4 @@ My experience in backend development and distributed systems complements my back
 
 ## Contact
 
-[LinkedIn](https://www.linkedin.com/in/lucas-davalle) · [Portfolio](https://lucasdavalle.github.io) · [GitHub](https://github.com/lucasdavalle)
+[LinkedIn](https://www.linkedin.com/in/lucas-davalle) · [Portfolio](https://lucasdavalle.github.io/lucasdavalle/) · [GitHub](https://github.com/lucasdavalle)
