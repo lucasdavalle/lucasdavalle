@@ -1,4 +1,4 @@
-<title>LanderPi // Portfolio Log</title>
+<title>Lucas Dávalle — Robotics Portfolio (ROS 2 / C++)</title>
 <meta name="description" content="Bitácora de proyectos de robótica en ROS 2 / C++ sobre un robot LanderPi real." />
 <style>
   /* ---------- Tokens: light (paper/blueprint) is the base, dark (console) overrides ---------- */
@@ -415,7 +415,7 @@
 
 <div class="topbar">
   <div class="topbar-inner">
-    <span><span class="status-dot" aria-hidden="true"></span>LANDERPI // PORTFOLIO_LOG — STATUS: ONLINE</span>
+    <span><span class="status-dot" aria-hidden="true"></span>LUCAS DÁVALLE — ROBOTICS / ROS 2 + C++</span>
     <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false">MODO: AUTO</button>
   </div>
 </div>
@@ -423,17 +423,19 @@
 <main class="wrap">
   <div id="view-list">
     <section class="hero">
-      <p class="eyebrow">UNIDAD LANDERPI-01 · REGISTRO DE INGENIERÍA</p>
-      <h1>ROS 2 (Humble)<span class="sep">·</span>C++17<span class="sep">·</span>Hardware-in-the-loop</h1>
+      <p class="eyebrow">Portfolio de robótica · Lucas Dávalle · Ingeniero Electrónico</p>
+      <h1>Percepción, control y navegación en ROS 2 / C++ sobre hardware real</h1>
       <p class="lede">
-        Bitácora de proyectos construidos sobre un LanderPi (ROS 2 / Raspberry Pi 5): cada
-        entrada es un sistema completo — percepción, decisión y control — probado y
-        grabado sobre el robot físico, no en simulación. Tocá un proyecto para ver su
-        demo y su explicación completa.
+        Nodos ROS 2 Humble en C++17 que reemplazan los nodos Python del fabricante del
+        LanderPi (base mecanum, brazo de 6 GDL, lidar y cámara RGB-D sobre una Raspberry Pi 5).
+        Cada proyecto integra sensado, estimación y control en lazo cerrado, con la lógica
+        separada de ROS y testeada con gtest, y está validado y grabado sobre el robot físico,
+        no en simulación. Entrá a cada proyecto para ver la demo, la arquitectura y las
+        interfaces ROS que usa.
       </p>
       <div class="links">
-        <a href="https://github.com/TU_USUARIO" target="_blank" rel="noopener">GITHUB ↗</a>
-        <a href="https://www.linkedin.com/in/TU_USUARIO" target="_blank" rel="noopener">LINKEDIN ↗</a>
+        <a href="https://github.com/lucasdavalle" target="_blank" rel="noopener">GITHUB ↗</a>
+        <a href="https://www.linkedin.com/in/lucas-davalle" target="_blank" rel="noopener">LINKEDIN ↗</a>
       </div>
 
       <div class="specstrip">
@@ -455,10 +457,10 @@
   <div id="view-detail" hidden></div>
 
   <footer>
-    <p>FIN DE TRANSMISIÓN — bitácora generada a partir del plan de proyectos LanderPi.</p>
+    <p>Lucas Dávalle · Proyectos ROS 2 / C++ sobre LanderPi · código en GitHub.</p>
     <div class="links">
-      <a href="https://github.com/TU_USUARIO" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://www.linkedin.com/in/TU_USUARIO" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com/lucasdavalle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/lucas-davalle" target="_blank" rel="noopener">LinkedIn</a>
     </div>
   </footer>
 </main>
@@ -489,7 +491,7 @@
      ===================================================================== */
   const PROJECTS = [
     {
-      id: "B1", tier: "basico", title: "Guardia perimetral en C++",
+      id: "B1", tier: "basico", title: "Guardia perimetral por lidar con apuntado por IK",
       oneLiner: "Vigilancia de una zona con lidar: filtrado de ruido por mediana, alarma sonora, historial de eventos y el brazo apuntando hacia la intrusión.",
       description: [
         "Reemplaza el modo 3 (lidar-guard) de lidar_controller.py del stack Python de fábrica. Vigila un sector angular configurable (ángulo mínimo/máximo + radio, con soporte de wraparound) sobre el lidar crudo, y solo confirma una intrusión si la mediana de una ventana de N scans cae por debajo del radio: un outlier de un solo frame no alcanza para disparar.",
@@ -512,7 +514,7 @@
       demoUrl: "media/b1-demo.mp4", linkedinUrl: ""
     },
     {
-      id: "B2", tier: "basico", title: "Seguidor de línea adaptativo",
+      id: "B2", tier: "basico", title: "Seguidor de línea con velocidad adaptativa por curvatura",
       oneLiner: "Sigue una línea adaptando la velocidad a la curvatura, la recupera espiando con el brazo y frena con el lidar ante un obstáculo.",
       description: [
         "Reemplaza line_following.py del stack Python de fábrica, que sigue la línea a velocidad fija y frena en seco cuando la pierde. La visión usa tres bandas horizontales de la cámara (cerca, media y lejos): además del desvío lateral, que corrige un PID sobre la velocidad angular, estima qué tan cerrada viene la curva.",
@@ -823,7 +825,7 @@
 
       <div class="detail-links">${repoLink}${liLink ? " " + liLink : ""}<a href="#/">← todos los proyectos</a></div>
     `;
-    document.title = `${p.id} — ${p.title} // LanderPi Portfolio`;
+    document.title = `${p.id} — ${p.title} — Lucas Dávalle`;
   }
 
   /* ---------- Router: alterna entre la lista y el detalle según el hash ---------- */
@@ -840,7 +842,7 @@
     } else {
       listEl.hidden = false;
       detailEl.hidden = true;
-      document.title = "LanderPi // Portfolio Log";
+      document.title = "Lucas Dávalle — Robotics Portfolio (ROS 2 / C++)";
     }
   }
 
